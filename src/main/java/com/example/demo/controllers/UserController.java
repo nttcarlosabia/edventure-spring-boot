@@ -24,20 +24,20 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable String id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    @GetMapping("/{nickname}")
+    public User getUserById(@PathVariable String nickname) {
+        return userRepository.findById(nickname)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + nickname));
     }
 
-    @PutMapping("/{id}")
-    public User updateUser(@PathVariable String id, @RequestBody User user) {
-        user.setId(id); // asegura que el ID se establezca correctamente
+    @PutMapping("/{nickname}")
+    public User updateUser(@PathVariable String nickname, @RequestBody User user) {
+        user.setNickname(nickname); // asegura que el ID se establezca correctamente
         return userRepository.save(user);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable String id) {
-        userRepository.deleteById(id);
+    @DeleteMapping("/{nickname}")
+    public void deleteUser(@PathVariable String nickname) {
+        userRepository.deleteById(nickname);
     }
 }

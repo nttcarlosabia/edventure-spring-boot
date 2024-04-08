@@ -11,12 +11,10 @@ import jakarta.persistence.Table;
 public class User {
 
 	@Id
-	@Column(name = "id")
-	private String id;
-	@Column(name = "name")
-	private String name;
 	@Column(name = "nickname")
 	private String nickname;
+	@Column(name = "name")
+	private String name;
 	@Column(name = "email")
 	private String email;
 	@Column(name = "avatar")
@@ -25,17 +23,12 @@ public class User {
 	public User() {
 	}
 
-	public User(String id, String name, String nickname, String email, String avatar) {
-		this.id = id;
+	public User(String name, String nickname, String email, String avatar) {
 		this.name = name;
 		this.nickname = nickname;
 		this.email = email;
 		this.avatar = avatar;
 
-	}
-
-	public String getId() {
-		return this.id;
 	}
 
 	public String getName() {
@@ -52,10 +45,6 @@ public class User {
 
 	public String getAvatar() {
 		return this.avatar;
-	}
-
-	public void setId(String value) {
-		this.id = value;
 	}
 
 	public void setName(String value) {
