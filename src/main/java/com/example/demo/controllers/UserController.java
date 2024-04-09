@@ -23,7 +23,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping("/login")
+    @PostMapping
     public User loginUser(@RequestBody LoginRequest loginRequest) {
         Long formatId = Utils.formatId(loginRequest.getSub());
 
