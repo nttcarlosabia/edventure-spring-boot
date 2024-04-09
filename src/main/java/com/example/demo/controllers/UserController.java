@@ -4,6 +4,8 @@ import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,16 +24,21 @@ public class UserController {
     }
 
     @PostMapping
-    public User loginUser(@RequestBody User request) {
+    public ResponseEntity loginUser(@RequestBody User request) {
         Optional<User> existingUser = userRepository.findById(request.getId());
 
-        if (!existingUser.isPresent()) {
-            User newUser = new User(request.getId(), request.getNickname(), request.getName(), request.getEmail(),
-                    request.getAvatar(), request.getLoggedDate());
-            existingUser = Optional.of(userRepository.save(newUser));
+        try {
+            if (!existingUser.isPresent()) {
+                User newUser = new User(request.getId(), request.getNickname(), request.getName(), request.getEmail(),
+                        request.getAvatar(), request.getLoggedDate());
+                existingUser = Optional.of(userRepository.save(newUser));
+            }
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(existingUser.get());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
 
-        return existingUser.get();
     }
 
     @DeleteMapping("/{id}")

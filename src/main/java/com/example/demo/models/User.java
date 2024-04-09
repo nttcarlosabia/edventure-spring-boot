@@ -40,6 +40,9 @@ public class User {
 	@ManyToMany(mappedBy = "usersFollowing")
 	private List<Event> followingEvents;
 
+	public User() {
+	}
+
 	public User(Long id, String nickname, String name, String email, String avatar, Date date) {
 		this.id = id;
 		this.nickname = nickname;

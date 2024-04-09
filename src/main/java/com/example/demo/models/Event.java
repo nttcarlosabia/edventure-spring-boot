@@ -40,6 +40,9 @@ public class Event {
     @ManyToMany
     private List<User> usersFollowing;
 
+    public Event() {
+    }
+
     public Event(Long id, User userOwner, String name, String type, byte[] image, Date date, String address,
             String assistantsExpected) {
         this.id = id;
