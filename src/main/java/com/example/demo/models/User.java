@@ -31,7 +31,6 @@ public class User {
 
 	private Date loggedDate;
 
-	@Lob
 	private String avatar;
 
 	@OneToMany(mappedBy = "userOwner")
