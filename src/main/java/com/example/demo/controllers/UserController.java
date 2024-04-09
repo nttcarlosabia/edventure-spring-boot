@@ -1,11 +1,15 @@
 package com.example.demo.controllers;
 
+import com.example.demo.models.LoginRequest;
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.utils.Utils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -19,25 +23,23 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    @PostMapping("/login")
+    public User loginUser(@RequestBody LoginRequest loginRequest) {
+        Long formatId = Utils.formatId(loginRequest.getSub());
+
+        Optional<User> existingUser = userRepository.findById(formatId);
+
+        if (!existingUser.isPresent()) {
+            User newUser = new User(formatId, loginRequest.getNickname(), loginRequest.getName(),
+                    loginRequest.getEmail(), loginRequest.getPicture(), loginRequest.getUpdated_at());
+            existingUser = Optional.of(userRepository.save(newUser));
+        }
+
+        return existingUser.get();
     }
 
-    @GetMapping("/{nickname}")
-    public User getUserById(@PathVariable String nickname) {
-        return userRepository.findById(nickname)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + nickname));
-    }
-
-    @PutMapping("/{nickname}")
-    public User updateUser(@PathVariable String nickname, @RequestBody User user) {
-        user.setNickname(nickname); // asegura que el ID se establezca correctamente
-        return userRepository.save(user);
-    }
-
-    @DeleteMapping("/{nickname}")
-    public void deleteUser(@PathVariable String nickname) {
-        userRepository.deleteById(nickname);
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userRepository.deleteById(id);
     }
 }

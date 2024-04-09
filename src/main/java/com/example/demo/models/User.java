@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,14 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users", schema = "public")
 
+@Getter
+@Setter
 public class User {
 
 	@Id
@@ -24,8 +29,10 @@ public class User {
 
 	private String email;
 
+	private Date loggedDate;
+
 	@Lob
-	private byte[] avatar;
+	private String avatar;
 
 	@OneToMany(mappedBy = "userOwner")
 	private List<Event> userEvents;
@@ -33,70 +40,15 @@ public class User {
 	@ManyToMany(mappedBy = "usersFollowing")
 	private List<Event> followingEvents;
 
-	public User(Long id, String nickname, String name, String email, byte[] avatar) {
+	public User(Long id, String nickname, String name, String email, String avatar, Date date) {
 		this.id = id;
 		this.nickname = nickname;
 		this.name = name;
 		this.email = email;
 		this.avatar = avatar;
+		this.loggedDate = date;
 		this.userEvents = new ArrayList<Event>();
 		this.followingEvents = new ArrayList<Event>();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public byte[] getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(byte[] avatar) {
-		this.avatar = avatar;
-	}
-
-	public List<Event> getUserEvents() {
-		return userEvents;
-	}
-
-	public void setUserEvents(List<Event> userEvents) {
-		this.userEvents = userEvents;
-	}
-
-	public List<Event> getFollowingEvents() {
-		return followingEvents;
-	}
-
-	public void setFollowingEvents(List<Event> followingEvents) {
-		this.followingEvents = followingEvents;
 	}
 
 }
