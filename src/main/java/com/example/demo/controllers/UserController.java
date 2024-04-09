@@ -1,9 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.LoginRequest;
 import com.example.demo.models.User;
 import com.example.demo.repositories.UserRepository;
-import com.example.demo.utils.Utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,14 +22,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User loginUser(@RequestBody LoginRequest loginRequest) {
-        Long formatId = Utils.formatId(loginRequest.getSub());
-
-        Optional<User> existingUser = userRepository.findById(formatId);
+    public User loginUser(@RequestBody User request) {
+        Optional<User> existingUser = userRepository.findById(request.getId());
 
         if (!existingUser.isPresent()) {
-            User newUser = new User(formatId, loginRequest.getNickname(), loginRequest.getName(),
-                    loginRequest.getEmail(), loginRequest.getPicture(), loginRequest.getUpdated_at());
+            User newUser = new User(request.getId(), request.getNickname(), request.getName(), request.getEmail(),
+                    request.getAvatar(), request.getLoggedDate());
             existingUser = Optional.of(userRepository.save(newUser));
         }
 
