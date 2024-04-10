@@ -23,6 +23,20 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity getUserById(@PathVariable Long id) {
+        try {
+            Optional<User> user = userRepository.findById(id);
+            if (user.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(user.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+    }
+
     @PostMapping
     public ResponseEntity loginUser(@RequestBody User request) {
         Optional<User> existingUser = userRepository.findById(request.getId());
