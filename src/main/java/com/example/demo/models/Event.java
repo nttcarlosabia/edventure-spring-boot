@@ -41,7 +41,7 @@ public class Event {
 
     private String address;
 
-    private String assistantsExpected;
+    private String assistants;
 
     @ManyToMany
     private List<User> usersFollowing;
@@ -50,7 +50,7 @@ public class Event {
     }
 
     public Event(Long userOwner, String name, String type, String description, String image, Date date, String address,
-            String assistantsExpected) {
+            String assistants) {
         this.userOwner = userOwner;
         this.name = name;
         this.description = description;
@@ -58,7 +58,7 @@ public class Event {
         this.image = image;
         this.date = date;
         this.address = address;
-        this.assistantsExpected = assistantsExpected;
+        this.assistants = assistants;
         this.usersFollowing = new ArrayList<User>();
     }
 

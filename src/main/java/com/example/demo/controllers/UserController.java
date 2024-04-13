@@ -55,8 +55,34 @@ public class UserController {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody User request) {
+        try {
+            Optional<User> existingUser = userRepository.findById(id);
+            if (existingUser.isPresent()) {
+                User updatedUser = existingUser.get();
+                updatedUser.setNickname(request.getNickname());
+                updatedUser.setName(request.getName());
+                updatedUser.setEmail(request.getEmail());
+                updatedUser.setAvatar(request.getAvatar());
+                updatedUser.setLoggedDate(request.getLoggedDate());
+                updatedUser = userRepository.save(updatedUser);
+                return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+    }
+
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
+    public ResponseEntity deleteUser(@PathVariable Long id) {
+        try {
+            userRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
     }
 }
