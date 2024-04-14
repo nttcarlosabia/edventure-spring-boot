@@ -32,7 +32,7 @@ public class User {
 
 	@JsonIgnoreProperties("userOwner")
 	@OneToMany(mappedBy = "userOwner")
-	private List<Event> ownedEvents = new ArrayList<>();
+	private List<Event> userEvents = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "usersFollowing")
 	private List<Event> followingEvents = new ArrayList<>();
@@ -47,7 +47,7 @@ public class User {
 		this.email = email;
 		this.avatar = avatar;
 		this.loggedDate = date;
-		this.ownedEvents = new ArrayList<Event>();
+		this.userEvents = new ArrayList<Event>();
 		this.followingEvents = new ArrayList<Event>();
 	}
 

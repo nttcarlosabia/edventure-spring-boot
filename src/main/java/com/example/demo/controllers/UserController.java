@@ -77,8 +77,8 @@ public class UserController {
                 if (request.getLoggedDate() != null) {
                     updatedUser.setLoggedDate(request.getLoggedDate());
                 }
-                if (request.getOwnedEvents() != null) {
-                    updatedUser.setOwnedEvents(request.getOwnedEvents());
+                if (request.getUserEvents() != null) {
+                    updatedUser.setUserEvents(request.getUserEvents());
                 }
                 if (request.getFollowingEvents() != null) {
                     updatedUser.setFollowingEvents(request.getFollowingEvents());

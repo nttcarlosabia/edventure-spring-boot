@@ -28,7 +28,7 @@ public class Event {
     private Long id;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "loggedDate", "avatar", "ownedEvents", "followingEvents" })
+    @JsonIgnoreProperties(value = { "loggedDate", "avatar", "userEvents", "followingEvents" })
     private User userOwner;
 
     private String name;
