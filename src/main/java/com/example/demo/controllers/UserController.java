@@ -61,18 +61,38 @@ public class UserController {
             Optional<User> existingUser = userRepository.findById(id);
             if (existingUser.isPresent()) {
                 User updatedUser = existingUser.get();
-                updatedUser.setNickname(request.getNickname());
-                updatedUser.setName(request.getName());
-                updatedUser.setEmail(request.getEmail());
-                updatedUser.setAvatar(request.getAvatar());
-                updatedUser.setLoggedDate(request.getLoggedDate());
+                // Verifica y actualiza cada atributo si se proporciona en la solicitud
+                if (request.getNickname() != null) {
+                    updatedUser.setNickname(request.getNickname());
+                }
+                if (request.getName() != null) {
+                    updatedUser.setName(request.getName());
+                }
+                if (request.getEmail() != null) {
+                    updatedUser.setEmail(request.getEmail());
+                }
+                if (request.getAvatar() != null) {
+                    updatedUser.setAvatar(request.getAvatar());
+                }
+                if (request.getLoggedDate() != null) {
+                    updatedUser.setLoggedDate(request.getLoggedDate());
+                }
+                if (request.getOwnedEvents() != null) {
+                    updatedUser.setOwnedEvents(request.getOwnedEvents());
+                }
+                if (request.getFollowingEvents() != null) {
+                    updatedUser.setFollowingEvents(request.getFollowingEvents());
+                }
+                // Guardar el usuario actualizado en la base de datos
                 updatedUser = userRepository.save(updatedUser);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+            // Capturar y registrar la excepción
+            e.printStackTrace(); // Registra la excepción en la consola de la aplicación
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

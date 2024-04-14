@@ -27,29 +27,26 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userOwner;
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "loggedDate", "avatar", "ownedEvents", "followingEvents" })
+    private User userOwner;
 
     private String name;
-
     private String type;
-
     private String description;
-
     private String image;
-
     private Date date;
-
     private String address;
-
     private String assistants;
 
     @ManyToMany
-    private List<User> usersFollowing;
+    private List<User> usersFollowing = new ArrayList<>();
 
     public Event() {
     }
 
-    public Event(Long userOwner, String name, String type, String description, String image, Date date, String address,
+    public Event(User userOwner, String name, String type, String description, String image, Date date,
+            String address,
             String assistants) {
         this.userOwner = userOwner;
         this.name = name;

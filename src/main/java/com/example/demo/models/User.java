@@ -4,9 +4,10 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -24,20 +25,17 @@ public class User {
 	private Long id;
 
 	private String nickname;
-
 	private String name;
-
 	private String email;
-
 	private Date loggedDate;
-
 	private String avatar;
 
+	@JsonIgnoreProperties("userOwner")
 	@OneToMany(mappedBy = "userOwner")
-	private List<Event> userEvents;
+	private List<Event> ownedEvents = new ArrayList<>();
 
 	@ManyToMany(mappedBy = "usersFollowing")
-	private List<Event> followingEvents;
+	private List<Event> followingEvents = new ArrayList<>();
 
 	public User() {
 	}
@@ -49,7 +47,7 @@ public class User {
 		this.email = email;
 		this.avatar = avatar;
 		this.loggedDate = date;
-		this.userEvents = new ArrayList<Event>();
+		this.ownedEvents = new ArrayList<Event>();
 		this.followingEvents = new ArrayList<Event>();
 	}
 
