@@ -111,8 +111,8 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/addEvent/{eventId}")
-    public ResponseEntity addUserEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    @PutMapping("/{userId}/addFollowingEvent/{eventId}")
+    public ResponseEntity addUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -133,7 +133,7 @@ public class UserController {
                 userRepository.save(user);
 
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body("Event added to user's events list successfully." + event.getName());
+                        .body("Event added to user's events list successfully.");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or event not found.");
             }
@@ -143,14 +143,14 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}/removeEvent/{eventId}")
-    public ResponseEntity removeUserEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    @DeleteMapping("/{userId}/removeFollowingEvent/{eventId}")
+    public ResponseEntity removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
 
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                user.getUserEvents().removeIf(event -> event.getId().equals(eventId));
+                user.getFollowingEvents().removeIf(event -> event.getId().equals(eventId));
                 userRepository.save(user);
 
                 return ResponseEntity.status(HttpStatus.OK).body("Event removed from user's events list successfully.");
