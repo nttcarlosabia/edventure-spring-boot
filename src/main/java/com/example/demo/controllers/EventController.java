@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.Event;
 import com.example.demo.repositories.EventRepository;
 
-@CrossOrigin(origins = { "http://localhost:5173", "https://edventure-six.vercel.app" })
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost:5173/*", "https://edventure-six.vercel.app" })
 @RestController
 @RequestMapping("/events")
 public class EventController {
