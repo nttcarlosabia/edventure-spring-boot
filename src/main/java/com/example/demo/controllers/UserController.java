@@ -66,7 +66,6 @@ public class UserController {
             Optional<User> existingUser = userRepository.findById(id);
             if (existingUser.isPresent()) {
                 User updatedUser = existingUser.get();
-                // Verifica y actualiza cada atributo si se proporciona en la solicitud
                 if (request.getNickname() != null) {
                     updatedUser.setNickname(request.getNickname());
                 }
@@ -82,21 +81,13 @@ public class UserController {
                 if (request.getLoggedDate() != null) {
                     updatedUser.setLoggedDate(request.getLoggedDate());
                 }
-                if (request.getUserEvents() != null) {
-                    updatedUser.setUserEvents(request.getUserEvents());
-                }
-                if (request.getFollowingEvents() != null) {
-                    updatedUser.setFollowingEvents(request.getFollowingEvents());
-                }
-                // Guardar el usuario actualizado en la base de datos
                 updatedUser = userRepository.save(updatedUser);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
             }
         } catch (Exception e) {
-            // Capturar y registrar la excepción
-            e.printStackTrace(); // Registra la excepción en la consola de la aplicación
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
