@@ -48,7 +48,8 @@ public class UserController {
 
         try {
             if (!existingUser.isPresent()) {
-                User newUser = new User(request.getId(), request.getNickname(), request.getName(), request.getEmail(),
+                User newUser = new User(request.getId(), request.getNickname(), request.getName(),
+                        request.getLastname(), request.getEmail(),
                         request.getAvatar(), request.getLoggedDate());
                 existingUser = Optional.of(userRepository.save(newUser));
             }
@@ -71,6 +72,12 @@ public class UserController {
                 }
                 if (request.getName() != null) {
                     updatedUser.setName(request.getName());
+                }
+                if (request.getLastname() != null) {
+                    updatedUser.setLastname(request.getLastname());
+                }
+                if (request.getShowEmail() != null) {
+                    updatedUser.setShowEmail(request.getShowEmail());
                 }
                 if (request.getEmail() != null) {
                     updatedUser.setEmail(request.getEmail());
