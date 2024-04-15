@@ -6,8 +6,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -31,10 +34,12 @@ public class User {
 	private String avatar;
 
 	@JsonIgnoreProperties("userOwner")
-	@OneToMany(mappedBy = "userOwner")
+	@OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> userEvents = new ArrayList<>();
 
-	@ManyToMany(mappedBy = "usersFollowing")
+	@JsonIgnoreProperties("usersFollowing")
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "user_event_following", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
 	private List<Event> followingEvents = new ArrayList<>();
 
 	public User() {

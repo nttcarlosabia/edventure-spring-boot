@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
+import com.example.demo.models.Event;
 import com.example.demo.models.User;
+import com.example.demo.repositories.EventRepository;
 import com.example.demo.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
     @GetMapping
     public List<User> getUsers() {
@@ -103,6 +107,58 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+    }
+
+    @PutMapping("/{userId}/addEvent/{eventId}")
+    public ResponseEntity addUserEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            Optional<User> optionalUser = userRepository.findById(userId);
+            Optional<Event> optionalEvent = eventRepository.findById(eventId);
+
+            if (optionalUser.isPresent() && optionalEvent.isPresent()) {
+                User user = optionalUser.get();
+                Event event = optionalEvent.get();
+
+                // Obtener la lista existente de eventos del usuario
+                List<Event> userEvents = user.getFollowingEvents();
+
+                // Agregar el evento a la lista existente de eventos del usuario
+                userEvents.add(event);
+
+                // Actualizar la lista de eventos del usuario
+                user.setFollowingEvents(userEvents);
+
+                userRepository.save(user);
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body("Event added to user's events list successfully." + event.getName());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or event not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{userId}/removeEvent/{eventId}")
+    public ResponseEntity removeUserEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+        try {
+            Optional<User> optionalUser = userRepository.findById(userId);
+
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                user.getUserEvents().removeIf(event -> event.getId().equals(eventId));
+                userRepository.save(user);
+
+                return ResponseEntity.status(HttpStatus.OK).body("Event removed from user's events list successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
