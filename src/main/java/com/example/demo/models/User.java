@@ -52,7 +52,7 @@ public class User {
 		this.nickname = nickname;
 		this.name = name;
 		this.lastname = lastname;
-		this.showEmail = true;
+		this.showEmail = false;
 		this.email = email;
 		this.avatar = avatar;
 		this.loggedDate = date;
