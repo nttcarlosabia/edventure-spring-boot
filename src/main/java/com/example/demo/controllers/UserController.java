@@ -111,7 +111,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{userId}/addFollowingEvent/{eventId}")
+    @PutMapping("/{userId}/updateFollowingEvent/{eventId}")
     public ResponseEntity addUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
@@ -143,7 +143,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}/removeFollowingEvent/{eventId}")
+    @DeleteMapping("/{userId}/updateFollowingEvent/{eventId}")
     public ResponseEntity removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
