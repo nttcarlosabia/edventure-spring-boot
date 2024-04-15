@@ -29,6 +29,8 @@ public class User {
 
 	private String nickname;
 	private String name;
+	private String lastname;
+	private Boolean showEmail;
 	private String email;
 	private Date loggedDate;
 	private String avatar;
@@ -45,10 +47,12 @@ public class User {
 	public User() {
 	}
 
-	public User(Long id, String nickname, String name, String email, String avatar, Date date) {
+	public User(Long id, String nickname, String name, String lastname, String email, String avatar, Date date) {
 		this.id = id;
 		this.nickname = nickname;
 		this.name = name;
+		this.lastname = lastname;
+		this.showEmail = true;
 		this.email = email;
 		this.avatar = avatar;
 		this.loggedDate = date;
