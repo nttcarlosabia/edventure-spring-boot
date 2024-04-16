@@ -31,7 +31,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties(value = { "loggedDate", "avatar", "userEvents", "followingEvents" })
+    @JsonIgnoreProperties(value = { "loggedDate", "userEvents", "followingEvents" })
     private User userOwner;
 
     private String name;
