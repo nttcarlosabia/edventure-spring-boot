@@ -12,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -40,6 +39,7 @@ public class Event {
     private String image;
     private Date date;
     private String address;
+    private String placeId;
     private String assistants;
 
     @JsonIgnoreProperties({ "userEvents", "followingEvents" })
@@ -49,7 +49,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(User userOwner, String name, String type, String description, String image, Date date,
+    public Event(User userOwner, String name, String type, String description, String placeId, String image, Date date,
             String address,
             String assistants) {
         this.userOwner = userOwner;
@@ -59,6 +59,7 @@ public class Event {
         this.image = image;
         this.date = date;
         this.address = address;
+        this.placeId = placeId;
         this.assistants = assistants;
         this.usersFollowing = new ArrayList<User>();
     }

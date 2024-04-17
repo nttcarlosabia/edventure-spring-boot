@@ -59,9 +59,37 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event request) {
         try {
-            Optional<Event> existingEvent = eventRepository.findById(id);
-            if (existingEvent.isPresent()) {
-                Event updatedEvent = eventRepository.save(request);
+            Optional<Event> existingEventOptional = eventRepository.findById(id);
+            if (existingEventOptional.isPresent()) {
+                Event existingEvent = existingEventOptional.get();
+                if (request.getUserOwner() != null) {
+                    existingEvent.setUserOwner(request.getUserOwner());
+                }
+                if (request.getName() != null) {
+                    existingEvent.setName(request.getName());
+                }
+                if (request.getType() != null) {
+                    existingEvent.setType(request.getType());
+                }
+                if (request.getDescription() != null) {
+                    existingEvent.setDescription(request.getDescription());
+                }
+                if (request.getImage() != null) {
+                    existingEvent.setImage(request.getImage());
+                }
+                if (request.getDate() != null) {
+                    existingEvent.setDate(request.getDate());
+                }
+                if (request.getAddress() != null) {
+                    existingEvent.setAddress(request.getAddress());
+                }
+                if (request.getPlaceId() != null) {
+                    existingEvent.setPlaceId(request.getPlaceId());
+                }
+                if (request.getAssistants() != null) {
+                    existingEvent.setAssistants(request.getAssistants());
+                }
+                Event updatedEvent = eventRepository.save(existingEvent);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedEvent);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
