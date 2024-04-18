@@ -39,7 +39,6 @@ public class User {
 	@OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> userEvents = new ArrayList<>();
 
-	@JsonIgnoreProperties("usersFollowing")
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "user_event_following", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
 	private List<Event> followingEvents = new ArrayList<>();
