@@ -128,10 +128,10 @@ public class UserController {
                 // Actualizar la lista de eventos del usuario
                 user.setFollowingEvents(userEvents);
 
-                userRepository.save(user);
+                User userUpdated = userRepository.save(user);
 
                 return ResponseEntity.status(HttpStatus.OK)
-                        .body("Event added to user's events list successfully.");
+                        .body(userUpdated);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or event not found.");
             }
@@ -149,9 +149,9 @@ public class UserController {
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
                 user.getFollowingEvents().removeIf(event -> event.getId().equals(eventId));
-                userRepository.save(user);
+                User userUpdated = userRepository.save(user);
 
-                return ResponseEntity.status(HttpStatus.OK).body("Event removed from user's events list successfully.");
+                return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
