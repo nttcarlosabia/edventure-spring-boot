@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Event;
+import com.example.demo.models.User;
 import com.example.demo.repositories.EventRepository;
+import com.example.demo.repositories.UserRepository;
 
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost:5173/*", "https://edventure-six.vercel.app" })
 @RestController
@@ -26,6 +28,8 @@ public class EventController {
 
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public List<Event> getEvents() {
@@ -102,10 +106,23 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         try {
+            Optional<Event> optionalEvent = eventRepository.findById(id);
+            if (!optionalEvent.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+            }
+            Event event = optionalEvent.get();
+
+            for (User user : event.getUsersFollowing()) {
+                user.getFollowingEvents().remove(event);
+                userRepository.save(user);
+            }
+
             eventRepository.deleteById(id);
+
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Event deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete event");
         }
     }
 }
+
