@@ -35,7 +35,6 @@ public class User {
 	private Date loggedDate;
 	private String avatar;
 
-	@JsonIgnoreProperties("userOwner")
 	@OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Event> userEvents = new ArrayList<>();
 
