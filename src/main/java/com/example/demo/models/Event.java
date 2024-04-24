@@ -1,9 +1,15 @@
 package com.example.demo.models;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import com.example.demo.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -41,17 +47,18 @@ public class Event {
     private String address;
     private String placeId;
     private String assistants;
+    
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Integer> followersHistory = new HashMap<>();
 
     @JsonIgnoreProperties({ "userEvents", "followingEvents" })
     @ManyToMany(mappedBy = "followingEvents", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<User> usersFollowing = new ArrayList<>();
 
-    public Event() {
-    }
+    public Event() {}
 
     public Event(User userOwner, String name, String type, String description, String placeId, String image, Date date,
-            String address,
-            String assistants) {
+            String address, String assistants) {
         this.userOwner = userOwner;
         this.name = name;
         this.description = description;
@@ -62,6 +69,6 @@ public class Event {
         this.placeId = placeId;
         this.assistants = assistants;
         this.usersFollowing = new ArrayList<User>();
+        this.followersHistory.put(Utils.getCurrentDateAsString(), 0);
     }
-
 }

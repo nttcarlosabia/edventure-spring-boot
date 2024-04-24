@@ -1,5 +1,8 @@
 package com.example.demo.controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,7 @@ import com.example.demo.models.Event;
 import com.example.demo.models.User;
 import com.example.demo.repositories.EventRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.utils.Utils;
 
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost:5173/*", "https://edventure-six.vercel.app" })
 @RestController
@@ -37,14 +41,19 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event request) {
-        try {
-            Event newEvent = eventRepository.save(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+public ResponseEntity<Event> createEvent(@RequestBody Event request) {
+    try {
+        request.setFollowersHistory(new HashMap<>());
+        String currentDate = Utils.getCurrentDateAsString();
+        request.getFollowersHistory().put(currentDate, 0);
+        
+        Event newEvent = eventRepository.save(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+}
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
@@ -92,6 +101,9 @@ public class EventController {
                 }
                 if (request.getAssistants() != null) {
                     existingEvent.setAssistants(request.getAssistants());
+                }
+                if (request.getFollowersHistory() != null) {
+                    existingEvent.setFollowersHistory(request.getFollowersHistory());
                 }
                 Event updatedEvent = eventRepository.save(existingEvent);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedEvent);

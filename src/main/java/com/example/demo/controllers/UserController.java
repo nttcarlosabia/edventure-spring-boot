@@ -4,13 +4,18 @@ import com.example.demo.models.Event;
 import com.example.demo.models.User;
 import com.example.demo.repositories.EventRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.utils.Utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost:5173/*", "https://edventure-six.vercel.app" })
@@ -119,19 +124,13 @@ public class UserController {
                 User user = optionalUser.get();
                 Event event = optionalEvent.get();
 
-                // Obtener la lista existente de eventos del usuario
                 List<Event> userEvents = user.getFollowingEvents();
-
-                // Agregar el evento a la lista existente de eventos del usuario
                 userEvents.add(event);
-
-                // Actualizar la lista de eventos del usuario
                 user.setFollowingEvents(userEvents);
-
+                updateFollowersHistory(event, event.getUsersFollowing().size() + 1);
                 User userUpdated = userRepository.save(user);
 
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(userUpdated);
+                return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or event not found.");
             }
@@ -145,13 +144,25 @@ public class UserController {
     public ResponseEntity removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
+            Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
-            if (optionalUser.isPresent()) {
+            if (optionalUser.isPresent() && optionalEvent.isPresent()) {
                 User user = optionalUser.get();
-                user.getFollowingEvents().removeIf(event -> event.getId().equals(eventId));
-                User userUpdated = userRepository.save(user);
+                Event event = optionalEvent.get();
 
-                return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+                List<Event> userEvents = user.getFollowingEvents();
+                boolean removed = userEvents.removeIf(userEvent -> userEvent.getId().equals(eventId));
+
+                if (removed) {
+                    user.setFollowingEvents(userEvents);
+                    updateFollowersHistory(event, event.getUsersFollowing().size() - 1);
+
+                    User userUpdated = userRepository.save(user);
+                    return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("Event not found in user's following events.");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
@@ -160,4 +171,27 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    private void updateFollowersHistory(Event event, int followersCount) {
+        Map<String, Integer> followersHistoryMap = event.getFollowersHistory();
+        String currentDateAsString = Utils.getCurrentDateAsString();
+        if (followersHistoryMap.containsKey(currentDateAsString)) {
+            int existingFollowersCount = followersHistoryMap.get(currentDateAsString);
+            int newFollowersCount = followersCount;
+            if (existingFollowersCount > followersCount) {
+                newFollowersCount = existingFollowersCount - 1;
+            }
+            if (newFollowersCount == 0) {
+                followersHistoryMap.remove(currentDateAsString);
+            } else {
+                followersHistoryMap.put(currentDateAsString, newFollowersCount);
+            }
+        } else {
+            followersHistoryMap.put(currentDateAsString, followersCount);
+        }
+
+        event.setFollowersHistory(followersHistoryMap);
+        eventRepository.save(event);
+    }
+
 }
