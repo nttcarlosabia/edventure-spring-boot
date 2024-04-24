@@ -41,19 +41,18 @@ public class EventController {
     }
 
     @PostMapping
-public ResponseEntity<Event> createEvent(@RequestBody Event request) {
-    try {
-        request.setFollowersHistory(new HashMap<>());
-        String currentDate = Utils.getCurrentDateAsString();
-        request.getFollowersHistory().put(currentDate, 0);
-        
-        Event newEvent = eventRepository.save(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
-}
+    public ResponseEntity<Event> createEvent(@RequestBody Event request) {
+        try {
+            request.setFollowersHistory(new HashMap<>());
+            String currentDate = Utils.getCurrentDateAsString();
+            request.getFollowersHistory().put(currentDate, 0);
 
+            Event newEvent = eventRepository.save(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
@@ -137,4 +136,3 @@ public ResponseEntity<Event> createEvent(@RequestBody Event request) {
         }
     }
 }
-

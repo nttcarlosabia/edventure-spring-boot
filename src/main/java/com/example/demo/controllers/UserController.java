@@ -181,11 +181,8 @@ public class UserController {
             if (existingFollowersCount > followersCount) {
                 newFollowersCount = existingFollowersCount - 1;
             }
-            if (newFollowersCount == 0) {
-                followersHistoryMap.remove(currentDateAsString);
-            } else {
-                followersHistoryMap.put(currentDateAsString, newFollowersCount);
-            }
+            followersHistoryMap.put(currentDateAsString, newFollowersCount);
+            
         } else {
             followersHistoryMap.put(currentDateAsString, followersCount);
         }
