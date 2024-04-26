@@ -1,5 +1,4 @@
 package com.example.demo.controllers;
-
 import com.example.demo.models.Event;
 import com.example.demo.models.User;
 import com.example.demo.repositories.EventRepository;
@@ -10,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,10 +18,14 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private EventRepository eventRepository;
+    public UserController(UserRepository userRepository, EventRepository eventRepository) {
+        this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
+    }
 
     @GetMapping
     public List<User> getUsers() {
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getUserById(@PathVariable Long id) {
+    public  ResponseEntity<Object> getUserById(@PathVariable Long id) {
         try {
             Optional<User> user = userRepository.findById(id);
             if (user.isPresent()) {
@@ -48,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity loginUser(@RequestBody User request) {
+    public  ResponseEntity<User> loginUser(@RequestBody User request) {
         Optional<User> existingUser = userRepository.findById(request.getId());
 
         try {
@@ -61,51 +60,56 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(existingUser.get());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody User request) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
         try {
             Optional<User> existingUser = userRepository.findById(id);
             if (existingUser.isPresent()) {
                 User updatedUser = existingUser.get();
-                if (request.getNickname() != null) {
-                    updatedUser.setNickname(request.getNickname());
-                }
-                if (request.getName() != null) {
-                    updatedUser.setName(request.getName());
-                }
-                if (request.getLastname() != null) {
-                    updatedUser.setLastname(request.getLastname());
-                }
-                if (request.getShowEmail() != null) {
-                    updatedUser.setShowEmail(request.getShowEmail());
-                }
-                if (request.getEmail() != null) {
-                    updatedUser.setEmail(request.getEmail());
-                }
-                if (request.getAvatar() != null) {
-                    updatedUser.setAvatar(request.getAvatar());
-                }
-                if (request.getLoggedDate() != null) {
-                    updatedUser.setLoggedDate(request.getLoggedDate());
-                }
+                updateUserFields(updatedUser, request);
                 updatedUser = userRepository.save(updatedUser);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    
+    private void updateUserFields(User existingUser, User request) {
+        if (request.getNickname() != null) {
+            existingUser.setNickname(request.getNickname());
+        }
+        if (request.getName() != null) {
+            existingUser.setName(request.getName());
+        }
+        if (request.getLastname() != null) {
+            existingUser.setLastname(request.getLastname());
+        }
+        if (request.getShowEmail() != null) {
+            existingUser.setShowEmail(request.getShowEmail());
+        }
+        if (request.getEmail() != null) {
+            existingUser.setEmail(request.getEmail());
+        }
+        if (request.getAvatar() != null) {
+            existingUser.setAvatar(request.getAvatar());
+        }
+        if (request.getLoggedDate() != null) {
+            existingUser.setLoggedDate(request.getLoggedDate());
+        }
+    }
+    
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         try {
             userRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -115,7 +119,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/updateFollowingEvent/{eventId}")
-    public ResponseEntity addUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    public  ResponseEntity<User> addUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -132,16 +136,16 @@ public class UserController {
 
                 return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or event not found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     @DeleteMapping("/{userId}/updateFollowingEvent/{eventId}")
-    public ResponseEntity removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    public  ResponseEntity<User> removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
             Optional<User> optionalUser = userRepository.findById(userId);
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
@@ -161,14 +165,14 @@ public class UserController {
                     return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("Event not found in user's following events.");
+                            .body(null);
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
