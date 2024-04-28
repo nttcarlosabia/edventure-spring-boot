@@ -1,6 +1,6 @@
 package com.example.demo.models;
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +67,7 @@ public class Event {
         this.address = address;
         this.placeId = placeId;
         this.assistants = assistants;
-        this.usersFollowing = new ArrayList<User>();
+        this.usersFollowing = new ArrayList<>();
         this.followersHistory.put(Utils.getCurrentDateAsString(), 0);
     }
 }

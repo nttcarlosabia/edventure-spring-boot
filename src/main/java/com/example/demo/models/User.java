@@ -52,8 +52,8 @@ public class User {
 		this.email = email;
 		this.avatar = avatar;
 		this.loggedDate = date;
-		this.userEvents = new ArrayList<Event>();
-		this.followingEvents = new ArrayList<Event>();
+		this.userEvents = new ArrayList<>();
+		this.followingEvents = new ArrayList<>();
 	}
 
 }
