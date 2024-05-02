@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<Event> createEvent(@RequestBody Event request) {
         try {
-            request.setFollowersHistory(new HashMap<>());
+            request.setFollowersHistory(new LinkedHashMap<>());
             String currentDate = Utils.getCurrentDateAsString();
             request.getFollowersHistory().put(currentDate, 0);
 

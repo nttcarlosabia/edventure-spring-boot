@@ -1,7 +1,7 @@
 package com.example.demo.models;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class Event {
     private String assistants;
     
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Integer> followersHistory = new HashMap<>();
+    private Map<String, Integer> followersHistory = new LinkedHashMap<>();
 
     @JsonIgnoreProperties({ "userEvents", "followingEvents" })
     @ManyToMany(mappedBy = "followingEvents", cascade = { CascadeType.PERSIST, CascadeType.MERGE })

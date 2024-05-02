@@ -1,4 +1,4 @@
-package com.example.demo.controllers;
+    package com.example.demo.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -118,6 +118,4 @@ class UserControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
-
-    // Puedes continuar agregando pruebas para los otros métodos del controlador
 }
