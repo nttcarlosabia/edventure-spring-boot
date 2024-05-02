@@ -8,7 +8,7 @@ public class Utils {
     private Utils() {}
 
     public static String getCurrentDateAsString() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(new Date());
     }
 }
