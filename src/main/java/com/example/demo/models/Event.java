@@ -42,7 +42,7 @@ public class Event {
     private String type;
     private String description;
     private String image;
-    private Date date;
+    private String date;
     private String address;
     private String placeId;
     private String assistants;
@@ -56,7 +56,7 @@ public class Event {
 
     public Event() {}
 
-    public Event(User userOwner, String name, String type, String description, String placeId, String image, Date date,
+    public Event(User userOwner, String name, String type, String description, String placeId, String image, String date,
             String address, String assistants) {
         this.userOwner = userOwner;
         this.name = name;

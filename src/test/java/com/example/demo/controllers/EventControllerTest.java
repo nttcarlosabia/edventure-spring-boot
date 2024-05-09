@@ -54,9 +54,9 @@ class EventControllerTest {
 
         events = new ArrayList<>();
         events.add(new Event(users.get(0), "Event 1", "Type 1", "Description 1", "Place 1", "image1.jpg",
-                new Date(System.currentTimeMillis()), "Address 1", "Assistants 1"));
+                "2035-06-01T08:30", "Address 1", "Assistants 1"));
         events.add(new Event(users.get(1), "Event 2", "Type 2", "Description 2", "Place 2", "image2.jpg",
-                new Date(System.currentTimeMillis()), "Address 2", "Assistants 2"));
+                "2035-06-01T08:30", "Address 2", "Assistants 2"));
     }
 
     @Test
@@ -83,7 +83,7 @@ class EventControllerTest {
     void testGetEventById_WhenEventExists() throws Exception {
         Long eventId = 1L;
         Event event = new Event(users.get(0), "Event 1", "Type 1", "Description 1", "Place 1", "image1.jpg",
-                new Date(System.currentTimeMillis()), "Address 1", "Assistants 1");
+                "2035-06-01T08:30", "Address 1", "Assistants 1");
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
         ResponseEntity<Event> response = eventController.getEventById(eventId);
@@ -108,7 +108,7 @@ class EventControllerTest {
         Long eventId = 1L;
         Event existingEvent = events.get(0);
         Event updatedEvent = new Event(users.get(0), "Updated Event", "Updated Type", "Updated Description",
-                "Updated Place", "Updated Image", new Date(System.currentTimeMillis()), "Updated Address",
+                "Updated Place", "Updated Image", "2035-06-01T08:30", "Updated Address",
                 "Updated Assistants");
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
@@ -124,7 +124,7 @@ class EventControllerTest {
     void testUpdateEvent_WhenEventDoesNotExist() {
         Long eventId = 1L;
         Event updatedEvent = new Event(users.get(0), "Updated Event", "Updated Type", "Updated Description",
-                "Updated Place", "Updated Image", new Date(System.currentTimeMillis()), "Updated Address",
+                "Updated Place", "Updated Image", "2035-06-01T08:30", "Updated Address",
                 "Updated Assistants");
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
