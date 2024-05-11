@@ -47,23 +47,23 @@ public class UserController {
     }
 
     @PostMapping
-public ResponseEntity<User> loginUser(@RequestBody User request) {
-    try {
-        Optional<User> existingUser = userRepository.findById(request.getId());
+    public ResponseEntity<User> loginUser(@RequestBody User request) {
+        try {
+            Optional<User> existingUser = userRepository.findById(request.getId());
 
-        if (!existingUser.isPresent()) {
-            User newUser = new User(request.getId(), request.getNickname(), request.getName(),
-                    request.getLastname(), request.getEmail(),
-                    request.getAvatar(), request.getLoggedDate());
-            newUser = userRepository.save(newUser);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(newUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(existingUser.get());
+            if (!existingUser.isPresent()) {
+                User newUser = new User(request.getId(), request.getNickname(), request.getName(),
+                        request.getLastname(), request.getEmail(),
+                        request.getAvatar(), request.getLoggedDate());
+                newUser = userRepository.save(newUser);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(newUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body(existingUser.get());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
-}
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
