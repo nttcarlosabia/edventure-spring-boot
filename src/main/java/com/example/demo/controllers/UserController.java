@@ -1,8 +1,8 @@
 package com.example.demo.controllers;
 import com.example.demo.models.Event;
 import com.example.demo.models.User;
-import com.example.demo.repositories.EventRepository;
-import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.UserService;
+import com.example.demo.services.EventService;
 import com.example.demo.utils.Utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +17,25 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
+    private final UserService userService;
+    private final EventService eventService;
 
     @Autowired
-    public UserController(UserRepository userRepository, EventRepository eventRepository) {
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
+    public UserController(UserService userService, EventService eventService) {
+        this.userService = userService;
+        this.eventService = eventService;
+
     }
 
     @GetMapping
     public List<User> getUsers() {
-        return userRepository.findAll();
+        return userService.getUsers();
     }
 
     @GetMapping("/{id}")
     public  ResponseEntity<Object> getUserById(@PathVariable Long id) {
         try {
-            Optional<User> user = userRepository.findById(id);
+            Optional<User> user = userService.getUserById(id);
             if (user.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(user.get());
             } else {
@@ -48,13 +49,13 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> loginUser(@RequestBody User request) {
         try {
-            Optional<User> existingUser = userRepository.findById(request.getId());
+            Optional<User> existingUser = userService.getUserById(request.getId());
 
             if (!existingUser.isPresent()) {
                 User newUser = new User(request.getId(), request.getNickname(), request.getName(),
                         request.getLastname(), request.getEmail(),
                         request.getAvatar(), request.getLoggedDate());
-                newUser = userRepository.save(newUser);
+                newUser = userService.saveUser(newUser);
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(newUser);
             } else {
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(existingUser.get());
@@ -67,11 +68,11 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
         try {
-            Optional<User> existingUser = userRepository.findById(id);
+            Optional<User> existingUser = userService.getUserById(id);
             if (existingUser.isPresent()) {
                 User updatedUser = existingUser.get();
                 Utils.updateUserFields(updatedUser, request);
-                updatedUser = userRepository.save(updatedUser);
+                updatedUser = userService.saveUser(updatedUser);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -85,7 +86,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         try {
-            userRepository.deleteById(id);
+            userService.deleteById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
@@ -95,8 +96,8 @@ public class UserController {
     @PutMapping("/{userId}/updateFollowingEvent/{eventId}")
     public  ResponseEntity<User> addUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
-            Optional<User> optionalUser = userRepository.findById(userId);
-            Optional<Event> optionalEvent = eventRepository.findById(eventId);
+            Optional<User> optionalUser = userService.getUserById(userId);
+            Optional<Event> optionalEvent = eventService.getEventById(eventId);
 
             if (optionalUser.isPresent() && optionalEvent.isPresent()) {
                 User user = optionalUser.get();
@@ -106,8 +107,8 @@ public class UserController {
                 userEvents.add(event);
                 user.setFollowingEvents(userEvents);
                 Utils.updateFollowersHistory(event, event.getUsersFollowing().size() + 1);
-                eventRepository.save(event);
-                User userUpdated = userRepository.save(user);
+                eventService.saveEvent(event);
+                User userUpdated = userService.saveUser(user);
 
                 return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
             } else {
@@ -122,8 +123,8 @@ public class UserController {
     @DeleteMapping("/{userId}/updateFollowingEvent/{eventId}")
     public  ResponseEntity<User> removeUserFollowingEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         try {
-            Optional<User> optionalUser = userRepository.findById(userId);
-            Optional<Event> optionalEvent = eventRepository.findById(eventId);
+            Optional<User> optionalUser = userService.getUserById(userId);
+            Optional<Event> optionalEvent = eventService.getEventById(eventId);
 
             if (optionalUser.isPresent() && optionalEvent.isPresent()) {
                 User user = optionalUser.get();
@@ -135,9 +136,9 @@ public class UserController {
                 if (removed) {
                     user.setFollowingEvents(userEvents);
                     Utils.updateFollowersHistory(event, event.getUsersFollowing().size() - 1);
-                    eventRepository.save(event);
+                    eventService.saveEvent(event);
 
-                    User userUpdated = userRepository.save(user);
+                    User userUpdated = userService.saveUser(user);
                     return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND)

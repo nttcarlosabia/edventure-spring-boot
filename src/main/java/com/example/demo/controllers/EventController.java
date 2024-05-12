@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Event;
 import com.example.demo.models.User;
-import com.example.demo.repositories.EventRepository;
-import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.EventService;
+import com.example.demo.services.UserService;
 import com.example.demo.utils.Utils;
 
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost:5173/*", "https://edventure-six.vercel.app" })
@@ -28,17 +28,17 @@ import com.example.demo.utils.Utils;
 @RequestMapping("/events")
 public class EventController {
 
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    private final EventService eventService;
+    private final UserService userService;
 
     @Autowired
-    public EventController(EventRepository eventRepository, UserRepository userRepository) {
-        this.eventRepository = eventRepository;
-        this.userRepository = userRepository;
+    public EventController(EventService eventService, UserService userService) {
+        this.eventService = eventService;
+        this.userService = userService;
     }
     @GetMapping
     public List<Event> getEvents() {
-        return eventRepository.findAll();
+        return eventService.getEvents();
     }
 
     @PostMapping
@@ -48,7 +48,7 @@ public class EventController {
             String currentDate = Utils.getCurrentDateAsString();
             request.getFollowersHistory().put(currentDate, 0);
 
-            Event newEvent = eventRepository.save(request);
+            Event newEvent = eventService.saveEvent(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(newEvent);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -58,7 +58,7 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
         try {
-            Optional<Event> event = eventRepository.findById(id);
+            Optional<Event> event = eventService.getEventById(id);
             if (event.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(event.get());
             } else {
@@ -72,11 +72,11 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event request) {
         try {
-            Optional<Event> existingEventOptional = eventRepository.findById(id);
+            Optional<Event> existingEventOptional = eventService.getEventById(id);
             if (existingEventOptional.isPresent()) {
                 Event existingEvent = existingEventOptional.get();
                 Utils.updateEventFields(existingEvent, request);
-                Event updatedEvent = eventRepository.save(existingEvent);
+                Event updatedEvent = eventService.saveEvent(existingEvent);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedEvent);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -89,7 +89,7 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         try {
-            Optional<Event> optionalEvent = eventRepository.findById(id);
+            Optional<Event> optionalEvent = eventService.getEventById(id);
             if (!optionalEvent.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
             }
@@ -97,10 +97,10 @@ public class EventController {
 
             for (User user : event.getUsersFollowing()) {
                 user.getFollowingEvents().remove(event);
-                userRepository.save(user);
+                userService.saveUser(user);
             }
 
-            eventRepository.deleteById(id);
+            eventService.deleteById(id);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Event deleted successfully");
         } catch (Exception e) {

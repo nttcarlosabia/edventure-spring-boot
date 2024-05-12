@@ -16,17 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.example.demo.models.User;
-import com.example.demo.repositories.EventRepository;
-import com.example.demo.repositories.UserRepository;
+import com.example.demo.services.EventService;
+import com.example.demo.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
     @Mock
-    private UserRepository userRepository;
+    private EventService eventService;
 
     @Mock
-    private EventRepository eventRepository;
+    private UserService userService;
 
     @InjectMocks
     private UserController userController;
@@ -42,7 +42,7 @@ class UserControllerTest {
 
     @Test
     void testGetUsers() {
-        when(userRepository.findAll()).thenReturn(users);
+        when(userService.getUsers()).thenReturn(users);
 
         List<User> result = userController.getUsers();
 
@@ -53,7 +53,7 @@ class UserControllerTest {
     void testGetUserById_WhenUserExists() {
         Long userId = 1L;
         User user = users.get(0);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
 
         ResponseEntity<Object> response = userController.getUserById(userId);
 
@@ -64,7 +64,7 @@ class UserControllerTest {
     @Test
     void testGetUserById_WhenUserDoesNotExist() {
         Long userId = 3L;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         ResponseEntity<Object> response = userController.getUserById(userId);
 
@@ -75,8 +75,8 @@ class UserControllerTest {
     @Test
     void testLoginUser_NewUser() {
         User newUser = new User(3L, "user3", "Michael", "Smith", "michael@example.com", "avatar3.jpg", new Date(System.currentTimeMillis()));
-        lenient().when(userRepository.findById(newUser.getId())).thenReturn(Optional.empty());
-        lenient().when(userRepository.save(newUser)).thenReturn(newUser);
+        lenient().when(userService.getUserById(newUser.getId())).thenReturn(Optional.empty());
+        lenient().when(userService.saveUser(newUser)).thenReturn(newUser);
 
         ResponseEntity<User> response = userController.loginUser(newUser);
 
@@ -86,7 +86,7 @@ class UserControllerTest {
     @Test
     void testLoginUser_ExistingUser() {
         User existingUser = users.get(0);
-        when(userRepository.findById(existingUser.getId())).thenReturn(Optional.of(existingUser));
+        when(userService.getUserById(existingUser.getId())).thenReturn(Optional.of(existingUser));
 
         ResponseEntity<User> response = userController.loginUser(existingUser);
 
@@ -99,7 +99,7 @@ class UserControllerTest {
         Long userId = 1L;
         User existingUser = users.get(0);
         User updatedUser = new User(null, "user1-updated", null, null, "john@example.com", "avatar1.jpg", new Date(System.currentTimeMillis()));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userService.getUserById(userId)).thenReturn(Optional.of(existingUser));
 
         ResponseEntity<User> response = userController.updateUser(userId, updatedUser);
 
@@ -111,7 +111,7 @@ class UserControllerTest {
     void testUpdateUser_WhenUserDoesNotExist() {
         Long userId = 3L;
         User updatedUser = new User(null, "user3", "Michael", "Smith", "michael@example.com", "avatar3.jpg", new Date(System.currentTimeMillis()));
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         ResponseEntity<User> response = userController.updateUser(userId, updatedUser);
 

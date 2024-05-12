@@ -23,17 +23,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.demo.models.Event;
 import com.example.demo.models.User;
-import com.example.demo.repositories.EventRepository;
-import com.example.demo.repositories.UserRepository;
+
+import com.example.demo.services.EventService;
+import com.example.demo.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class EventControllerTest {
 
     @Mock
-    private EventRepository eventRepository;
+    private EventService eventService;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @InjectMocks
     private EventController eventController;
@@ -61,7 +62,7 @@ class EventControllerTest {
 
     @Test
     void testGetEvents() throws Exception {
-        when(eventRepository.findAll()).thenReturn(events);
+        when(eventService.getEvents()).thenReturn(events);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/events")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -72,7 +73,7 @@ class EventControllerTest {
     @Test
     void testCreateEvent() {
         Event event = new Event();
-        when(eventRepository.save(any(Event.class))).thenReturn(event);
+        when(eventService.saveEvent(any(Event.class))).thenReturn(event);
         ResponseEntity<Event> response = eventController.createEvent(event);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -84,7 +85,7 @@ class EventControllerTest {
         Long eventId = 1L;
         Event event = new Event(users.get(0), "Event 1", "Type 1", "Description 1", "Place 1", "image1.jpg",
                 "2035-06-01T08:30", "Address 1", "Assistants 1");
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventService.getEventById(eventId)).thenReturn(Optional.of(event));
 
         ResponseEntity<Event> response = eventController.getEventById(eventId);
 
@@ -95,7 +96,7 @@ class EventControllerTest {
     @Test
     void testGetEventById_WhenEventDoesNotExist() throws Exception {
         Long eventId = 1L;
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+        when(eventService.getEventById(eventId)).thenReturn(Optional.empty());
 
         ResponseEntity<Event> response = eventController.getEventById(eventId);
 
@@ -111,8 +112,8 @@ class EventControllerTest {
                 "Updated Place", "Updated Image", "2035-06-01T08:30", "Updated Address",
                 "Updated Assistants");
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
-        when(eventRepository.save(any(Event.class))).thenReturn(updatedEvent);
+        when(eventService.getEventById(eventId)).thenReturn(Optional.of(existingEvent));
+        when(eventService.saveEvent(any(Event.class))).thenReturn(updatedEvent);
 
         ResponseEntity<Event> response = eventController.updateEvent(eventId, updatedEvent);
 
@@ -127,7 +128,7 @@ class EventControllerTest {
                 "Updated Place", "Updated Image", "2035-06-01T08:30", "Updated Address",
                 "Updated Assistants");
 
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+        when(eventService.getEventById(eventId)).thenReturn(Optional.empty());
 
         ResponseEntity<Event> response = eventController.updateEvent(eventId, updatedEvent);
 
@@ -139,7 +140,7 @@ class EventControllerTest {
     void testDeleteEvent_WhenEventExists() {
         Long eventId = 1L;
         Event event = events.get(0);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventService.getEventById(eventId)).thenReturn(Optional.of(event));
 
         ResponseEntity<String> response = eventController.deleteEvent(eventId);
 
@@ -150,7 +151,7 @@ class EventControllerTest {
     @Test
     void testDeleteEvent_WhenEventDoesNotExist() {
         Long eventId = 1L;
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+        when(eventService.getEventById(eventId)).thenReturn(Optional.empty());
 
         ResponseEntity<String> response = eventController.deleteEvent(eventId);
 

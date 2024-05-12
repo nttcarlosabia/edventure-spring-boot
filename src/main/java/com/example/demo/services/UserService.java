@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,15 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public User addUser(User user) {
+    public Optional<User> getUserById(Long id) {
+        return userRepo.findById(id);
+    }
+
+    public void deleteById(Long id) {
+        userRepo.deleteById(id);
+    }
+
+    public User saveUser(User user) {
         return userRepo.save(user);
     }
 
