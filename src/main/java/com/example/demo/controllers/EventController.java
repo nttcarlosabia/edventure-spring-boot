@@ -75,7 +75,7 @@ public class EventController {
             Optional<Event> existingEventOptional = eventRepository.findById(id);
             if (existingEventOptional.isPresent()) {
                 Event existingEvent = existingEventOptional.get();
-                updateEventFields(existingEvent, request);
+                Utils.updateEventFields(existingEvent, request);
                 Event updatedEvent = eventRepository.save(existingEvent);
                 return ResponseEntity.status(HttpStatus.OK).body(updatedEvent);
             } else {
@@ -85,40 +85,6 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-    
-    private void updateEventFields(Event existingEvent, Event request) {
-        if (request.getUserOwner() != null) {
-            existingEvent.setUserOwner(request.getUserOwner());
-        }
-        if (request.getName() != null) {
-            existingEvent.setName(request.getName());
-        }
-        if (request.getType() != null) {
-            existingEvent.setType(request.getType());
-        }
-        if (request.getDescription() != null) {
-            existingEvent.setDescription(request.getDescription());
-        }
-        if (request.getImage() != null) {
-            existingEvent.setImage(request.getImage());
-        }
-        if (request.getDate() != null) {
-            existingEvent.setDate(request.getDate());
-        }
-        if (request.getAddress() != null) {
-            existingEvent.setAddress(request.getAddress());
-        }
-        if (request.getPlaceId() != null) {
-            existingEvent.setPlaceId(request.getPlaceId());
-        }
-        if (request.getAssistants() != null) {
-            existingEvent.setAssistants(request.getAssistants());
-        }
-        if (request.getFollowersHistory() != null) {
-            existingEvent.setFollowersHistory(request.getFollowersHistory());
-        }
-    }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
