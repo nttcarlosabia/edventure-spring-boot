@@ -11,9 +11,12 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 public class SecurityConfig {
-  private String issuer ="https://dev-9bbt1y5j.us.auth0.com/";
+  @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+  private String issuer;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
